@@ -1,0 +1,10 @@
+run/
+dist/
+server/jars/
+*.jar
+*.mca
+logs/
+*.log
+eula.txt
+__pycache__/
+node_modules/

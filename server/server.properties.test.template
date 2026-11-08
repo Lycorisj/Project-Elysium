@@ -1,0 +1,25 @@
+# Test-server overlay. Not a live server.properties file.
+# tools/run_tests.sh may copy these values onto keys the dedicated server
+# itself generated under run/. It does not run while D-0001 is proposed.
+# The RCON password is generated per process and written only under run/.
+# This template leaves the password empty so the repository holds no secret.
+# function-permission-level stays 2. Do not raise it to make a test pass.
+white-list=false
+online-mode=true
+enable-rcon=true
+broadcast-rcon-to-ops=false
+rcon.password=
+server-ip=127.0.0.1
+server-port=25565
+rcon.port=25575
+pause-when-empty-seconds=0
+function-permission-level=2
+gamemode=adventure
+difficulty=peaceful
+spawn-monsters=false
+view-distance=2
+simulation-distance=2
+enable-query=false
+prevent-proxy-connections=true
+management-server-enabled=false
+level-name=world

@@ -1,0 +1,27 @@
+{
+  "edition": "java",
+  "channel": "release",
+  "version_id": "26.3",
+  "observed_at": "2026-11-08",
+  "version_manifest_url": "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json",
+  "version_json_url": "https://piston-meta.mojang.com/v1/packages/80608ff6753705b6a82e2cb86a5937d4d233abd4/26.3.json",
+  "release_time": "2026-09-15T11:23:02+00:00",
+  "manifest_listed_time": "2026-11-03T06:53:32+00:00",
+  "latest_snapshot_observed_not_pinned": "26.4-snapshot-7",
+  "server_download_url": "https://piston-data.mojang.com/v1/objects/33680f5f2ac32864d6d7cf5e56a705fdb3e05f4c/server.jar",
+  "server_sha1": "33680f5f2ac32864d6d7cf5e56a705fdb3e05f4c",
+  "server_size": 62294556,
+  "java_major": 25,
+  "java_component": "java-runtime-epsilon",
+  "world_version": null,
+  "protocol": null,
+  "data_pack_version": "121.0",
+  "resource_pack_version": "97.1",
+  "jar_downloaded": false,
+  "sources": {
+    "version_id_sha1_size_java": "Public version manifest version_manifest_v2.json and the linked launcher version JSON, read 2026-11-08. Latest release was 26.3. Latest snapshot 26.4-snapshot-7 was not pinned.",
+    "data_pack_and_resource_pack": "Minecraft.net article 'Minecraft Java Edition 26.3', Technical Changes, read 2026-11-08: 'The Data Pack version is now 121.0' and 'The Resource Pack version is now 97.1'.",
+    "world_version_and_protocol": "Not fields of the public version manifest or the linked launcher version JSON. The server jar was not downloaded, so version.json inside the jar was not read. These two values stay null instead of being copied from a secondary note.",
+    "pack_mcmeta_shape": "Integer 121 is the major data-pack format. The minor 121.0 is the article's version. Resource pack 97.1 is recorded as the two-element array [97, 1]. Neither pack.mcmeta was confirmed by a server boot. No legacy pack_format field is set."
+  }
+}

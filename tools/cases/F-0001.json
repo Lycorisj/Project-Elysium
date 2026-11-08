@@ -1,0 +1,128 @@
+{
+  "spec": "F-0001",
+  "verified_on_server": false,
+  "reply_patterns_locked": false,
+  "verification": "unverified until a dedicated-server boot accepts these commands. This file is not a runtime transcript. Do not report a runtime pass while reply_patterns_locked is false.",
+  "item_syntax_note": "Chest writes use /item override and /item fill, the 26.3 slot-source forms described in the 26.3 command changes. They are not a 1.21 /item replace snippet. Emptying the chest uses data remove because the public /item forms place an item and have no zero count. None of these commands were accepted by a running server on this change.",
+  "clock": {
+    "prefer_command": "tick sprint 40",
+    "fallback": "wall_clock_3s",
+    "fallback_manifest_value": "wall_clock",
+    "prefer_manifest_value": "tick_sprint"
+  },
+  "queries": {
+    "done": "data get storage elysium:slice ledger.done",
+    "awards": "data get storage elysium:slice ledger.awards",
+    "rejects": "data get storage elysium:slice ledger.rejects",
+    "chest": "execute if block 0 100 0 minecraft:chest",
+    "marker_tuff": "execute if block 0 100 2 minecraft:tuff",
+    "marker_prismarine": "execute if block 0 100 2 minecraft:prismarine",
+    "forceload": "forceload query",
+    "witness_store": "execute store result storage elysium:slice tmp.witnesses int 1 if entity @e[type=minecraft:armor_stand,tag=elysium.witness,x=0,y=100,z=-2,distance=..1]",
+    "witness_get": "data get storage elysium:slice tmp.witnesses"
+  },
+  "cases": [
+    {
+      "id": "place_room",
+      "setup": [
+        "function elysium:ledger/place_room",
+        "function elysium:ledger/place_room"
+      ],
+      "expect": {
+        "chest": true,
+        "marker": "minecraft:tuff",
+        "witness_count": 1,
+        "done": 0,
+        "awards": 0,
+        "rejects": 0,
+        "forceload_chunks": ["-1,-1", "-1,0", "0,-1", "0,0"]
+      }
+    },
+    {
+      "id": "empty",
+      "setup": [
+        "data remove block 0 100 0 Items",
+        "function elysium:ledger/evaluate"
+      ],
+      "expect": {
+        "marker": "minecraft:tuff",
+        "done": 0,
+        "rejects": 0
+      }
+    },
+    {
+      "id": "wrong_item",
+      "setup": [
+        "item override block 0 100 0 container.* with minecraft:cobblestone 1",
+        "function elysium:ledger/evaluate",
+        "function elysium:ledger/evaluate"
+      ],
+      "expect": {
+        "marker": "minecraft:tuff",
+        "done": 0,
+        "rejects": 1
+      }
+    },
+    {
+      "id": "success",
+      "setup": [
+        "item override block 0 100 0 container.* with minecraft:amethyst_shard 1",
+        "item override block 0 100 0 container.1 with minecraft:echo_shard 1",
+        "function elysium:ledger/evaluate"
+      ],
+      "expect": {
+        "marker": "minecraft:prismarine",
+        "done": 1,
+        "awards": 1
+      }
+    },
+    {
+      "id": "idempotent",
+      "setup": [
+        "function elysium:ledger/evaluate"
+      ],
+      "expect": {
+        "marker": "minecraft:prismarine",
+        "done": 1,
+        "awards": 1
+      }
+    },
+    {
+      "id": "locked",
+      "setup": [
+        "item fill block 0 100 0 container.* with minecraft:cobblestone 1",
+        "function elysium:ledger/evaluate"
+      ],
+      "expect": {
+        "marker": "minecraft:prismarine",
+        "done": 1,
+        "awards": 1
+      }
+    },
+    {
+      "id": "witness_missing",
+      "setup": [
+        "function elysium_test:reset",
+        "item override block 0 100 0 container.* with minecraft:amethyst_shard 1",
+        "item override block 0 100 0 container.1 with minecraft:echo_shard 1",
+        "kill @e[type=minecraft:armor_stand,tag=elysium.witness]",
+        "function elysium:ledger/evaluate"
+      ],
+      "expect": {
+        "done": 0,
+        "awards": 0
+      }
+    },
+    {
+      "id": "clock_stable",
+      "setup": [
+        "function elysium_test:reset",
+        "item override block 0 100 0 container.* with minecraft:cobblestone 1"
+      ],
+      "advance_ticks": 40,
+      "expect": {
+        "rejects": 1
+      }
+    }
+  ]
+}
