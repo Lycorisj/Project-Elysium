@@ -340,6 +340,9 @@ def run_cases(password: str) -> tuple[list[dict], str, list[str]]:
         for probe in ("help item", "help tick"):
             reply = client.command(probe)
             transcript.append(f"$ {probe}\n{reply}")
+        # Freeze so the 20-tick cadence cannot run between setup commands.
+        freeze_reply = client.command("tick freeze")
+        transcript.append(f"$ tick freeze\n{freeze_reply}")
         for case in payload["cases"]:
             case_notes = [f"case {case['id']}"]
             rejected = False
@@ -348,28 +351,24 @@ def run_cases(password: str) -> tuple[list[dict], str, list[str]]:
                 case_notes.append(f"$ {command}\n{reply}")
                 rejected = rejected or looks_rejected(reply)
             if case.get("advance_ticks"):
-                command = payload["clock"]["prefer_command"]
+                # 26.3: tick step advances a frozen game and returns when the ticks
+                # have run. tick sprint returns before its ticks finish.
+                command = "tick step 40t"
                 reply = client.command(command)
                 case_notes.append(f"$ {command}\n{reply}")
                 if looks_rejected(reply):
-                    time.sleep(3)
-                    clock_case = payload["clock"]["fallback_manifest_value"]
-                    case_notes.append("tick sprint was rejected; waited 3 seconds; clock_case: wall_clock")
+                    command = payload["clock"]["prefer_command"]
+                    reply = client.command(command)
+                    case_notes.append(f"$ {command}\n{reply}")
+                    if looks_rejected(reply):
+                        time.sleep(3)
+                        clock_case = payload["clock"]["fallback_manifest_value"]
+                        case_notes.append("tick step and tick sprint were rejected; waited 3 seconds; clock_case: wall_clock")
+                    else:
+                        clock_case = payload["clock"]["prefer_manifest_value"]
+                        time.sleep(1.0)
                 else:
-                    clock_case = payload["clock"]["prefer_manifest_value"]
-                    # 26.3 replies "The game is sprinting" before the ticks finish.
-                    # Querying RCON during the sprint stalls the client, so wait
-                    # one second, then ask once.
-                    time.sleep(1.0)
-                    state = client.command("tick query")
-                    case_notes.append(f"$ tick query\n{state}")
-                    if "running normally" not in state.lower():
-                        time.sleep(2.0)
-                        state = client.command("tick query")
-                        case_notes.append(f"$ tick query\n{state}")
-                    if "running normally" not in state.lower():
-                        rejected = True
-                        case_notes.append("tick sprint did not finish before the ledger was read")
+                    clock_case = "tick_step"
             queries = payload["queries"]
             patterns = payload.get("reply_patterns", {})
             expected = case.get("expect", {})

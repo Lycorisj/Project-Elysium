@@ -44,7 +44,7 @@ Origin is the chest at `(0, 100, 0)`. Bounds are `slice-origin`: x `-6..6`, y `9
 - Fills x `-6..6`, y `99`, z `-6..6` with deepslate tiles.
 - Places a chest at `(0, 100, 0)`.
 - Places tuff at `(0, 100, 2)`.
-- Removes every armor stand tagged `elysium.witness` and summons one at `(0, 100, -2)` with that tag. A second call does not leave a second stand. The stand is invisible, marker, silent, invulnerable, and has no gravity. Those flags are technical. They are unverified NBT.
+- Removes every armor stand tagged `elysium.witness` and summons one at `(0, 100, -2)` with that tag, at most once per gametime tick. A second call in the same tick cannot see the stand the first call summoned, so it records `witness.tick` and skips the summon when gametime has not changed. A later tick kills and summons again, leaving one stand. The stand is invisible, marker, silent, invulnerable, and has no gravity. A 26.3 run showed two stands when both calls landed in one tick before this guard.
 - Initializes `storage elysium:slice` key `ledger` to `{done:0, awards:0, rejects:0}` when the key is missing. A second call does not reset a ledger that already exists. It also creates `seen.items` as an empty list and `clock` as `{loop:0b}` when those keys are missing. It does not clear them when they already exist.
 
 `elysium:ledger/evaluate`:
@@ -80,7 +80,7 @@ Static: `tools/static_validate.py` must exit 0. That check is the only automated
 
 Server, after D-0001 is accepted, and not run on this change: the eight cases in `TESTING_STRATEGY.md` and `tools/cases/F-0001.json`. Reply patterns are unlocked, so the runner must not report those cases as passed. Chest edits use `/item override` and `/item fill`, not `/item replace`. Emptying the chest in the `empty` case uses `data remove block 0 100 0 Items`. The block queries name `0 100 0` and `0 100 2`.
 
-`clock_stable` advances 40 ticks with `tick sprint 40` when the server accepts that command. Otherwise the runner waits 3 seconds, says so, and records `clock_case: wall_clock`. This change records neither value.
+`clock_stable` advances 40 ticks. On 26.3, `tick sprint` returns before the ticks finish, and `tick step` refuses unless the game is frozen. The runner freezes the game for setup, then runs `tick step 40t` and records `clock_case: tick_step`. If that command is rejected, it tries `tick sprint 40` and otherwise waits 3 seconds and records `clock_case: wall_clock`.
 
 ## Simulation checks
 

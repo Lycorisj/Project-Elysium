@@ -9,6 +9,7 @@ Creative direction 《折潮》 is accepted in D-0005. The setting is not yet bu
 | elysium:slice | ledger | F-0001 | implemented |
 | elysium:slice | seen.items | F-0001 | implemented |
 | elysium:slice | clock | F-0001 | implemented |
+| elysium:slice | witness.tick | F-0001 | implemented |
 | elysium:slice | tmp.now | F-0001 | implemented |
 | elysium:slice | tmp.n | F-0001 | implemented |
 | elysium:slice | tmp.witnesses | F-0001 | implemented |
