@@ -1,6 +1,6 @@
 # Quality standards
 
-No creative direction is accepted yet. No creative canon is accepted. These are rules a reviewer can apply. They are not a judgment that a build is good to play.
+Creative direction 《折潮》 is accepted in D-0005. The setting is not yet built. These are rules a reviewer can apply. They are not a judgment that a build is good to play.
 
 ## Evidence labels
 
@@ -45,7 +45,7 @@ A runtime author manifest, written only after a real server run, has:
 - `secrets_redacted`: true
 - `unverified`: discovery, visual quality, difficulty feel, narrative, client behavior, fun
 
-This change has no runtime manifest. Writing one that claims the eight cases passed would be false. `tools/run_tests.sh` refuses to start the server while D-0001 is proposed, and it refuses to mark a case passed while reply patterns are unlocked.
+A runtime manifest is written only after a real server run. Writing one that claims the eight cases passed without that run would be false. `tools/run_tests.sh` refuses to start the server while D-0001 is proposed. D-0001 is accepted. The runner still refuses to mark a case passed while reply patterns are unlocked.
 
 ## Technical gates
 

@@ -467,8 +467,8 @@ def check_pin(report: Report) -> None:
         report.fail("PINNED.json java_major must be 25 for the observed 26.3 manifest")
     if pin.get("data_pack_version") != "121.0" or pin.get("resource_pack_version") != "97.1":
         report.fail("PINNED.json pack versions must match the 26.3 article values read for this pin")
-    if pin.get("jar_downloaded") is not False:
-        report.fail("PINNED.json must record that the jar was not downloaded")
+    if not isinstance(pin.get("jar_downloaded"), bool):
+        report.fail("PINNED.json jar_downloaded must be a boolean")
     for key in ("version_json_url", "server_download_url", "version_manifest_url"):
         value = str(pin.get(key, ""))
         if not value.startswith("https://"):
@@ -525,6 +525,7 @@ def check_documents(report: Report) -> None:
         "decisions/D-0002-vanilla-dedicated-server.md",
         "decisions/D-0003-noncanon-first-slice.md",
         "decisions/D-0004-evidence-classes.md",
+        "decisions/D-0005-folded-tide.md",
         "specs/README.md",
         "specs/REGISTRY.md",
         "specs/features/F-0001-ledger-cairn.md",
@@ -535,15 +536,18 @@ def check_documents(report: Report) -> None:
     vision = ROOT / "VISION.md"
     if vision.is_file():
         text = read_text(vision)
-        if "accepted: false" not in text or "No creative canon is accepted." not in text:
-            report.fail("VISION.md must say no creative canon is accepted and accepted: false")
-        if "No creative direction is accepted yet." not in text:
-            report.fail("VISION.md must say no creative direction is accepted yet")
+        if "accepted: true" not in text or "《折潮》" not in text:
+            report.fail("VISION.md must record accepted direction 《折潮》")
+        if "The setting is not yet built." not in text:
+            report.fail("VISION.md must say the setting is not yet built")
+        if "「选 A《折潮》」" not in text:
+            report.fail("VISION.md must quote the owner words exactly")
     decisions = {
-        "decisions/D-0001-minecraft-eula.md": "proposed",
+        "decisions/D-0001-minecraft-eula.md": "accepted",
         "decisions/D-0002-vanilla-dedicated-server.md": "accepted",
         "decisions/D-0003-noncanon-first-slice.md": "accepted",
         "decisions/D-0004-evidence-classes.md": "accepted",
+        "decisions/D-0005-folded-tide.md": "accepted",
     }
     for relative, status in decisions.items():
         path = ROOT / relative
@@ -552,6 +556,12 @@ def check_documents(report: Report) -> None:
         match = re.search(r"(?m)^- status:\s*(\S+)\s*$", read_text(path))
         if match is None or match.group(1) != status:
             report.fail(f"{relative} status must be {status}")
+    d0001 = read_text(ROOT / "decisions" / "D-0001-minecraft-eula.md")
+    if "「接受 EULA，可以跑专用服测试」" not in d0001:
+        report.fail("D-0001 must quote the owner words exactly")
+    d0005 = read_text(ROOT / "decisions" / "D-0005-folded-tide.md")
+    if "「选 A《折潮》」" not in d0005:
+        report.fail("D-0005 must quote the owner words exactly")
 
 
 def main() -> int:

@@ -1,8 +1,8 @@
 # Testing strategy
 
-No creative direction is accepted yet. No creative canon is accepted.
+Creative direction 《折潮》 is accepted in D-0005. The setting is not yet built. F-0001 stays non-canon plumbing.
 
-Layers run in order. M0 is specified to run the first three. Layer 4 waits. On this change only layer 1 can run, because D-0001 is proposed.
+Layers run in order. M0 runs the first three. Layer 4 waits. D-0001 is accepted, so layer 2 may launch a local test server.
 
 ## Layer 1 — static
 

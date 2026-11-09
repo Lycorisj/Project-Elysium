@@ -2,7 +2,7 @@
 
 Project Elysium exists to ship an original Minecraft Java Edition Complete-the-Monument map. The owner makes strategic and creative decisions, accepts milestones, and approves a release. Agents do the routine building, programming, testing, balancing inside an accepted spec, and debugging.
 
-No creative direction is accepted yet. No creative canon is accepted.
+Creative direction 《折潮》 is accepted in D-0005. The setting is not yet built. F-0001 stays non-canon plumbing.
 
 ## Authority
 

@@ -1,6 +1,6 @@
 # Registry
 
-No creative direction is accepted yet. No creative canon is accepted. Claiming a row is part of the feature diff. M0 has one region. Scoreboard objectives are none: storage is the state channel.
+Creative direction 《折潮》 is accepted in D-0005. The setting is not yet built. Claiming a row is part of the feature diff. M0 has one non-canon region, `slice-origin`. Scoreboard objectives are none: storage is the state channel. No direction regions are reserved here.
 
 ## Storage roots
 

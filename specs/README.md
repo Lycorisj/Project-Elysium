@@ -1,6 +1,6 @@
 # Specifications
 
-No creative direction is accepted yet. No creative canon is accepted.
+Creative direction 《折潮》 is accepted in D-0005. The setting is not yet built. F-0001 stays non-canon plumbing.
 
 Every mechanic, area, and player-facing system has a spec under `specs/features/` before implementation. The M0 slice is the exception: its spec lands in the same pull request as its code because the production workflow is the source. After M0, a feature pull request that changes behavior without a spec change fails review.
 

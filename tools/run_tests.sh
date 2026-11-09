@@ -188,11 +188,12 @@ class Server:
         self.jar = jar
         self.proc: subprocess.Popen | None = None
         self.log_handle = None
+        self.console_path = run_dir / "console.log"
         self.log_path = run_dir / "logs" / "latest.log"
 
     def start(self) -> None:
-        self.log_path.parent.mkdir(parents=True, exist_ok=True)
-        self.log_handle = self.log_path.open("a", encoding="utf-8", errors="replace")
+        self.console_path.parent.mkdir(parents=True, exist_ok=True)
+        self.log_handle = self.console_path.open("a", encoding="utf-8", errors="replace")
         self.proc = subprocess.Popen(
             ["java", "-Xms1G", "-Xmx2G", "-jar", str(self.jar), "--nogui"],
             cwd=self.run_dir,
@@ -392,6 +393,16 @@ def run_cases(password: str) -> tuple[list[dict], str, list[str]]:
     return results, "\n".join(transcript) + "\n", clock_case
 
 
+def attempt_evidence_dir(attempt: int) -> Path:
+    override = os.environ.get("ELYSIUM_EVIDENCE_DIR", "").strip()
+    if override:
+        dest = Path(override) / f"attempt-{attempt}"
+    else:
+        dest = ROOT / "evidence" / "m0" / "attempts" / f"attempt-{attempt}"
+    dest.mkdir(parents=True, exist_ok=True)
+    return dest
+
+
 def one_attempt(pin: dict, jar: Path, attempt: int, password: str) -> dict:
     run_dir = ROOT / "run"
     if run_dir.exists():
@@ -403,8 +414,16 @@ def one_attempt(pin: dict, jar: Path, attempt: int, password: str) -> dict:
         server.wait_for_exit_or_properties()
         exited = server.proc is not None and server.proc.poll() is not None
         server.stop()
-        if exited:
+        eula_text = ""
+        eula_path = run_dir / "eula.txt"
+        if eula_path.is_file():
+            eula_text = eula_path.read_text(encoding="utf-8", errors="replace")
+        if re.search(r"(?m)^eula=false\s*$", eula_text):
             accept_eula_after_false_exit(run_dir)
+            server.start()
+            server.wait_for_exit_or_properties()
+            server.stop()
+        elif exited and not (run_dir / "server.properties").is_file():
             server.start()
             server.wait_for_exit_or_properties()
             server.stop()
@@ -420,9 +439,12 @@ def one_attempt(pin: dict, jar: Path, attempt: int, password: str) -> dict:
         deadline = time.time() + 30
         while time.time() < deadline and server.proc is not None and server.proc.poll() is None:
             time.sleep(0.5)
-        log_text = ""
+        log_parts = []
+        if server.console_path.is_file():
+            log_parts.append(server.console_path.read_text(encoding="utf-8", errors="replace"))
         if server.log_path.is_file():
-            log_text = server.log_path.read_text(encoding="utf-8", errors="replace")
+            log_parts.append(server.log_path.read_text(encoding="utf-8", errors="replace"))
+        log_text = "\n".join(log_parts)
         properties = (run_dir / "server.properties").read_text(encoding="utf-8", errors="replace")
         transcript = f"readiness list:\n{ready}\nstop:\n{client_stop}\n" + transcript
         redacted_transcript = redact(transcript, password)
@@ -430,11 +452,10 @@ def one_attempt(pin: dict, jar: Path, attempt: int, password: str) -> dict:
         redacted_properties = redact(properties, password)
         if password in redacted_transcript or password in redacted_log or password in redacted_properties:
             raise SystemExit("refusing to store a transcript that still contains the RCON password")
-        evidence = run_dir / "evidence"
-        evidence.mkdir(parents=True, exist_ok=True)
-        (evidence / f"attempt-{attempt}-transcript.txt").write_text(redacted_transcript, encoding="utf-8")
-        (evidence / f"attempt-{attempt}-server.log").write_text(redacted_log, encoding="utf-8")
-        (evidence / f"attempt-{attempt}-server.properties").write_text(redacted_properties, encoding="utf-8")
+        evidence = attempt_evidence_dir(attempt)
+        (evidence / "transcript.txt").write_text(redacted_transcript, encoding="utf-8")
+        (evidence / "server.log").write_text(redacted_log, encoding="utf-8")
+        (evidence / "server.properties").write_text(redacted_properties, encoding="utf-8")
         log_failures = scan_log(redacted_log)
         return {
             "attempt": attempt,
@@ -462,9 +483,10 @@ def main() -> int:
 
     password = secrets.token_urlsafe(18)
     dirty = git_dirty()
+    attempt_count = int(os.environ.get("ELYSIUM_ATTEMPTS", "2"))
     attempts = []
     try:
-        for number in (1, 2):
+        for number in range(1, attempt_count + 1):
             attempts.append(one_attempt(pin, jar, number, password))
     finally:
         password = ""
@@ -472,7 +494,7 @@ def main() -> int:
         case["result"] != "pass" or attempt["log_failures"]
         for attempt in attempts
         for case in attempt["cases"]
-    ) or len(attempts) != 2
+    ) or len(attempts) != attempt_count
     manifest = {
         "run_id": f"{git_sha()}-author",
         "role": "author",
@@ -515,9 +537,13 @@ def main() -> int:
         ],
         "runtime_pass": False if failed else True,
     }
+    rendered = json.dumps(manifest, indent=2) + "\n"
+    if os.environ.get("ELYSIUM_WRITE_MANIFEST", "1") == "0":
+        print(rendered)
+        return int(manifest["exit_code"])
     out = ROOT / "evidence" / "m0" / f"{manifest['git_sha']}-author.json"
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    out.write_text(rendered, encoding="utf-8")
     print(json.dumps({"exit_code": manifest["exit_code"], "manifest": str(out)}, indent=2))
     return int(manifest["exit_code"])
 

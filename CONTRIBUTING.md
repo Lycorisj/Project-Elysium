@@ -1,6 +1,6 @@
 # Contributing
 
-No creative direction is accepted yet. No creative canon is accepted.
+Creative direction 《折潮》 is accepted in D-0005. The setting is not yet built. F-0001 stays non-canon plumbing.
 
 Routine contributors are agents. "Contribute" does not mean "ask the owner to try the build." The owner is not the default tester, compiler, or debugger.
 

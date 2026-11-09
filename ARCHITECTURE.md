@@ -1,6 +1,6 @@
 # Architecture
 
-No creative direction is accepted yet. No creative canon is accepted. This file describes the pipeline, not a world.
+Creative direction 《折潮》 is accepted in D-0005. The setting is not yet built. This file describes the pipeline. F-0001 stays non-canon plumbing.
 
 ## Packs
 

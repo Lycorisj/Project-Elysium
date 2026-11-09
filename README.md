@@ -2,7 +2,7 @@
 
 Project Elysium is an original Minecraft Java Edition Complete-the-Monument map: a sequence of areas, each with a challenge, each contributing visible progress toward a monument, playable from a fresh start through a victory state in single-player and on a vanilla dedicated server.
 
-No creative direction is accepted yet. No creative canon is accepted. The current milestone is M0, the pipeline. M0 is not complete. This branch stops at the Minecraft EULA gate in `decisions/D-0001-minecraft-eula.md`. The dedicated server was not downloaded and was not launched.
+Creative direction 《折潮》 is accepted in D-0005. The setting is not yet built. The current milestone is M0, the pipeline. M0 is not complete until the dedicated-server evidence and a reviewer re-run exist. D-0001 is accepted for local and automated test servers only. Owner words are quoted in the decision files.
 
 F-0001 Ledger Cairn is non-canon plumbing used to prove the pipeline. It is not the monument, and it is not a map.
 

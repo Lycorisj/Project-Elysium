@@ -2,7 +2,7 @@
 
 Agents build, program, test, and debug inside an accepted spec. They do not invent creative canon, and they do not declare a build fun, fair, clear, beautiful, or finished.
 
-No creative direction is accepted yet. No creative canon is accepted. Git is the authority for what ships after these documents merge. If `internal/production-workflow.md` in the project store disagrees with git, git wins.
+Creative direction 《折潮》 is accepted in D-0005. The setting is not yet built. F-0001 stays non-canon plumbing. Git is the authority for what ships after these documents merge. If `internal/production-workflow.md` in the project store disagrees with git, git wins.
 
 ## Read order
 
@@ -25,7 +25,7 @@ Class T belongs to agents and is accepted when the pull request merges: file lay
 
 When unsure, treat the decision as class S and stop that task. Write one proposal. Do not guess the owner's answer.
 
-D-0001 stays `proposed` until a commit quotes the owner's words and names the option. Do not download the server jar, write `eula=true`, or launch a server while it is proposed.
+D-0001 stays `proposed` until a commit quotes the owner's words and names the option. Do not download the server jar, write `eula=true`, or launch a server while it is proposed. D-0001 is accepted. The quoted words are in `decisions/D-0001-minecraft-eula.md`. That acceptance authorizes `eula=true` for local and automated test servers only.
 
 ## Honesty
 
@@ -85,6 +85,6 @@ Do not ask the owner to compile, run Java, read a stack trace, resolve a git con
 
 A task is reassigned at most twice. After that the coordinator splits the brief. A class S block is not a reassignment. Environment failures stay on the same branch. Do not weaken a test to make a suite green. Do not blend two mechanics into one function to hide a registry conflict. An escaped defect is reverted on the default branch; a postmortem does not by itself change the tests.
 
-## M0 stop
+## M0 server gate
 
-This repository was created while D-0001 was `proposed`. Static validation may be green. The dedicated server was not started. Reply patterns in `tools/cases/F-0001.json` are not locked. `tools/run_tests.sh` must keep refusing to launch until D-0001 is `accepted`.
+While D-0001 is `proposed`, `tools/run_tests.sh` must refuse to launch. D-0001 is accepted, so the runner may download the pinned jar and launch a local test server. `eula=true` is written only inside `run/`. Reply patterns stay unlocked until a boot records them. A static pass is not a runtime pass.

@@ -13,7 +13,7 @@ advancements: ["elysium:slice/ledger_cleared"]
 
 # F-0001 Ledger Cairn
 
-No creative direction is accepted yet. No creative canon is accepted. This slice is non-canon plumbing. D-0003 records that. The status stays `draft` until a reviewer manifest exists, and it is not `implemented` on this change. Every command below is unverified until a dedicated-server boot accepts it.
+Creative direction 《折潮》 is accepted in D-0005. The setting is not yet built. This slice stays non-canon plumbing. D-0003 records that, and this slice is not rebuilt into the tide map. The status stays `draft` until a reviewer manifest exists, and it is not `implemented` on a static pass. Every command below is unverified until a dedicated-server boot accepts it.
 
 ## Player-visible behavior
 

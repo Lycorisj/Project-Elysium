@@ -1,6 +1,6 @@
 # Map source
 
-No creative direction is accepted yet. No creative canon is accepted. There is no map yet.
+Creative direction 《折潮》 is accepted in D-0005. The setting is not yet built. There is no map yet. F-0001 stays non-canon plumbing.
 
 The M0 world artifact is the function `elysium:ledger/place_room`, not a region file. It builds the non-canon slice inside the reserved region `slice-origin`: x from -6 to 6, y from 99 to 104, z from -6 to 6, inclusive. The chest is at `(0, 100, 0)`, the marker is at `(0, 100, 2)`, and one witness armor stand is at `(0, 100, -2)`.
 

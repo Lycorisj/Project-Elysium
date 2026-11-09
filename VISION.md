@@ -1,38 +1,37 @@
-status: draft
-accepted: false
+status: direction-accepted
+accepted: true
+setting_built: false
 
-No creative direction is accepted yet. No creative canon is accepted.
-
-This file does not choose a world, a story, or a setting. Options for the owner belong in a class S decision, not here.
+The accepted creative direction is 《折潮》. Owner words: 「选 A《折潮》」. See D-0005. The setting is not yet built. F-0001 stays non-canon plumbing.
 
 ## Setting
 
-No creative canon is accepted.
+The accepted direction is 《折潮》. The setting is not yet built.
 
 ## Player fantasy
 
-No creative canon is accepted.
+The accepted direction is 《折潮》. The setting is not yet built.
 
 ## Monument
 
-No creative canon is accepted.
+The accepted direction is 《折潮》. The setting is not yet built.
 
 ## Tone
 
-No creative canon is accepted.
+The accepted direction is 《折潮》. The setting is not yet built.
 
 ## Difficulty intent
 
-No creative canon is accepted.
+The accepted direction is 《折潮》. The setting is not yet built.
 
 ## Victory
 
-No creative canon is accepted.
+The accepted direction is 《折潮》. The setting is not yet built.
 
 ## Failure
 
-No creative canon is accepted.
+The accepted direction is 《折潮》. The setting is not yet built.
 
 ## What this map refuses to be
 
-No creative canon is accepted. This file does not name a fiction the map refuses, because refusing a fiction would choose one.
+The accepted direction is 《折潮》. The setting is not yet built. This file does not add regions, lore, or objectives.

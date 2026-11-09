@@ -1,6 +1,6 @@
 # Roadmap
 
-No creative direction is accepted yet. No creative canon is accepted. Milestones have no dates, no invented area names, and no wool counts.
+Creative direction 《折潮》 is accepted in D-0005. The setting is not yet built. Milestones have no dates and this file adds no regions.
 
 | Milestone | Entry | Exit evidence | Owner |
 | --- | --- | --- | --- |
@@ -14,6 +14,6 @@ No creative direction is accepted yet. No creative canon is accepted. Milestones
 | M7 Candidate | Freeze | Pack zip, pin, full suite, unverified list | Required to accept the candidate |
 | M8 Release | Candidate | Owner approval quoting the candidate SHA | Required |
 
-M0's current state: the repository, the non-canon slice, and the static validator exist. D-0001 is proposed, so the dedicated server has not run. Two wiped-world runs and a reviewer re-run are still required before M0 is done. The default branch does not yet contain the merge. The coordinator moves the tracker, not the implementer.
+M0's current state: the repository and the non-canon slice exist. D-0001 is accepted for local and automated test servers. Two wiped-world runs and a reviewer re-run are still required before M0 is done. The default branch does not yet contain the merge. The coordinator moves the tracker, not the implementer. D-0005 does not add area names to this roadmap.
 
 M1 is the first owner packet for creative canon. M0 does not pre-accept its recommendation. The Chinese strings on F-0001 are disposable plumbing for one advancement. They are not the M1 language decision.
