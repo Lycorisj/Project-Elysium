@@ -1,9 +1,15 @@
 {
   "spec": "F-0001",
-  "verified_on_server": false,
-  "reply_patterns_locked": false,
-  "verification": "unverified until a dedicated-server boot accepts these commands. This file is not a runtime transcript. Do not report a runtime pass while reply_patterns_locked is false.",
-  "item_syntax_note": "Chest writes use /item override and /item fill, the 26.3 slot-source forms described in the 26.3 command changes. They are not a 1.21 /item replace snippet. Emptying the chest uses data remove because the public /item forms place an item and have no zero count. None of these commands were accepted by a running server on this change.",
+  "verified_on_server": true,
+  "reply_patterns_locked": true,
+  "verification": "Reply strings below were recorded from Minecraft Java Edition 26.3 on 2026-11-09. The block queries name coordinates in the command. The forceload reply names the four chunk columns. Order of those columns is not significant; each column must be present.",
+  "reply_patterns": {
+    "storage_prefix": "Storage elysium:slice has the following contents: ",
+    "test_passed": "Test passed",
+    "forceload_count": "4 force loaded chunks",
+    "forceload_chunks": ["[-1, -1]", "[-1, 0]", "[0, -1]", "[0, 0]"]
+  },
+  "item_syntax_note": "Chest writes use /item override and /item fill. They are not a 1.21 /item replace snippet. help item on 26.3 still lists replace, and also lists fill and override. Emptying the chest uses data remove. The 26.3 server accepted these commands: override reported replaced slots, fill reported replaced slots, and data remove reported modified block data.",
   "clock": {
     "prefer_command": "tick sprint 40",
     "fallback": "wall_clock_3s",

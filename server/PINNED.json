@@ -13,15 +13,15 @@
   "server_size": 62294556,
   "java_major": 25,
   "java_component": "java-runtime-epsilon",
-  "world_version": null,
-  "protocol": null,
+  "world_version": 5023,
+  "protocol": 777,
   "data_pack_version": "121.0",
   "resource_pack_version": "97.1",
-  "jar_downloaded": false,
+  "jar_downloaded": true,
   "sources": {
     "version_id_sha1_size_java": "Public version manifest version_manifest_v2.json and the linked launcher version JSON, read 2026-11-08. Latest release was 26.3. Latest snapshot 26.4-snapshot-7 was not pinned.",
     "data_pack_and_resource_pack": "Minecraft.net article 'Minecraft Java Edition 26.3', Technical Changes, read 2026-11-08: 'The Data Pack version is now 121.0' and 'The Resource Pack version is now 97.1'.",
-    "world_version_and_protocol": "Not fields of the public version manifest or the linked launcher version JSON. The server jar was not downloaded, so version.json inside the jar was not read. These two values stay null instead of being copied from a secondary note.",
+    "world_version_and_protocol": "Read 2026-11-09 from version.json inside the downloaded 26.3 server jar, after D-0001 was accepted in commit 219c3d00d9f88bcce99cd745121ba54e782518d2. world_version 5023. protocol_version 777. pack_version data_major 121 data_minor 0, resource_major 97 resource_minor 1. The jar is gitignored.",
     "pack_mcmeta_shape": "Integer 121 is the major data-pack format. The minor 121.0 is the article's version. Resource pack 97.1 is recorded as the two-element array [97, 1]. Neither pack.mcmeta was confirmed by a server boot. No legacy pack_format field is set."
   }
 }

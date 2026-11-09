@@ -498,8 +498,18 @@ def check_case_file(report: Report) -> None:
     ]
     if ids != expected:
         report.fail(f"F-0001 cases must be {expected}")
-    if payload.get("verified_on_server") is not False or payload.get("reply_patterns_locked") is not False:
-        report.fail("F-0001 commands stay unverified until a dedicated-server boot")
+    if payload.get("verified_on_server") is not True or payload.get("reply_patterns_locked") is not True:
+        report.fail("F-0001 reply patterns must be locked from the 26.3 boot")
+    patterns = payload.get("reply_patterns", {})
+    if patterns.get("storage_prefix") != "Storage elysium:slice has the following contents: ":
+        report.fail("locked storage reply prefix does not match the 26.3 boot")
+    if patterns.get("test_passed") != "Test passed":
+        report.fail("locked block-query reply does not match the 26.3 boot")
+    if patterns.get("forceload_count") != "4 force loaded chunks":
+        report.fail("locked forceload count does not match the 26.3 boot")
+    chunks = patterns.get("forceload_chunks")
+    if chunks != ["[-1, -1]", "[-1, 0]", "[0, -1]", "[0, 0]"]:
+        report.fail("locked forceload chunks do not match the 26.3 boot")
     for case in cases:
         if not isinstance(case, dict):
             continue

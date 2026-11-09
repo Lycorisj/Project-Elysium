@@ -61,7 +61,7 @@ Origin is the chest at `(0, 100, 0)`. Bounds are `slice-origin`: x `-6..6`, y `9
 
 `elysium:tick` calls `elysium:ledger/arm_clock` once. That function schedules `elysium:ledger/cadence` for 20 ticks. The cadence runs evaluate and schedules itself again for 20 ticks. A clock that calls evaluate every tick and increments rejects every call is a defect. The edge trigger is what keeps an unchanged chest from climbing. The cadence is what keeps evaluate off the per-tick path.
 
-`elysium_test:reset` sets the ledger back to `{done:0, awards:0, rejects:0}`, sets `seen.items` to `[]`, removes `tmp`, and sets the marker to tuff. It does not move the room, the chest, or the witness.
+`elysium_test:reset` sets the ledger back to `{done:0, awards:0, rejects:0}`, sets `seen.items` to `[]`, removes `tmp`, and sets the marker to tuff. It does not move the room or the chest. If no `elysium.witness` stands at `(0, 100, -2)`, it summons one there. A 26.3 run of the case order showed `clock_stable` staying at `rejects` 0 while the witness removed by `witness_missing` was still absent. The summon does not move the room.
 
 There is no tuning table. Counts are the integers in this section: one shard in slot 0, one shard in slot 1, a 20-tick cadence, and a 3-block witness radius.
 

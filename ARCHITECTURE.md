@@ -38,7 +38,7 @@ The witness is invisible, marker-sized, silent, and has no custom name. Those fl
 
 ## Servers
 
-`server/PINNED.json` is the version pin. Java major, the server URL, SHA-1, and size come from the public version manifest and the linked launcher version JSON, read 2026-11-08. Data pack `121.0` and resource pack `97.1` come from the Minecraft.net 26.3 article read the same day. World version and protocol are null: they are not fields of that manifest, and the jar was not opened. Snapshots are not pinned. The observed latest snapshot was `26.4-snapshot-7`.
+`server/PINNED.json` is the version pin. Java major, the server URL, SHA-1, and size come from the public version manifest and the linked launcher version JSON, re-read 2026-11-09. Latest release was still `26.3`. Data pack `121.0` and resource pack `97.1` come from the Minecraft.net 26.3 article. After D-0001 was accepted, the jar's own `version.json` was read: world version 5023, protocol 777, data pack 121.0, resource pack 97.1. A 26.3 boot enabled `file/elysium` and `file/elysium_test` with integer pack format 121. No legacy `pack_format` field was required. Snapshots are not pinned. The observed latest snapshot was `26.4-snapshot-7`.
 
 `server/server.properties.test.template` is the test overlay, including `pause-when-empty-seconds=0` and `function-permission-level=2`. The release template does not pause-disable the empty server, leaves RCON off, leaves the management server off, and fills in no password. Generated properties exist only under `run/`. The runner overlays a key only when the server's own generated file already has that key. If `enable-rcon` is absent, the run stops. `management-server-enabled` stays false.
 
@@ -46,4 +46,4 @@ The witness is invisible, marker-sized, silent, and has no custom name. Those fl
 
 ## What is unverified
 
-Every command in the datapack, the advancement root background, the compute increment, the `data modify` change detector, `/item override`, `/item fill`, `data remove` for an empty chest, `/forceload`, and `/tick sprint` are unverified until a dedicated-server boot accepts them. This architecture does not claim that boot.
+A 26.3 boot accepted `place_room`, `evaluate`, `/item override`, `/item fill`, `data remove`, `forceload query`, `data get storage`, the compute increment, and `tick sprint`. `tick sprint 40` replies `The game is sprinting` before those ticks finish. The runner waits until `tick query` says the game is running normally. An empty follow-up RCON command closed the client during `help item`; `tools/rcon.py` reassembles a split reply by waiting for a quiet gap instead. The advancement background path was not rejected during pack load. Discovery, visual quality, difficulty feel, narrative, client behavior, and fun remain unverified.

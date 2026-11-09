@@ -174,6 +174,7 @@ def scan_log(text: str) -> list[str]:
 def redact(text: str, password: str) -> str:
     if password:
         text = text.replace(password, "[REDACTED]")
+    text = re.sub(r"(?m)^([A-Za-z0-9.-]*(?:password|secret)=).+$", r"\1[REDACTED]", text)
     return re.sub(r"\b[A-Za-z0-9]{40}\b", "[REDACTED-40]", text)
 
 
@@ -356,37 +357,72 @@ def run_cases(password: str) -> tuple[list[dict], str, list[str]]:
                     case_notes.append("tick sprint was rejected; waited 3 seconds; clock_case: wall_clock")
                 else:
                     clock_case = payload["clock"]["prefer_manifest_value"]
+                    # 26.3 returns "The game is sprinting" before the ticks finish.
+                    deadline = time.time() + 5
+                    finished = False
+                    while time.time() < deadline:
+                        state = client.command("tick query")
+                        case_notes.append(f"$ tick query\n{state}")
+                        if "running normally" in state.lower():
+                            finished = True
+                            break
+                        time.sleep(0.1)
+                    if not finished:
+                        rejected = True
+                        case_notes.append("tick sprint did not finish within 5 seconds")
             queries = payload["queries"]
+            patterns = payload.get("reply_patterns", {})
             expected = case.get("expect", {})
+            prefix = patterns.get("storage_prefix", "")
+            passed_text = patterns.get("test_passed", "")
+            mismatches = []
+
+            def run_query(key: str) -> str:
+                query_reply = client.command(queries[key])
+                case_notes.append(f"$ {queries[key]}\n{query_reply}")
+                return query_reply
+
+            def storage_number(query_reply: str) -> str:
+                text = query_reply.strip()
+                if prefix and text.startswith(prefix):
+                    return text[len(prefix):].strip()
+                return ""
+
             if "chest" in expected:
-                reply = client.command(queries["chest"])
-                case_notes.append(f"$ {queries['chest']}\n{reply}")
+                if run_query("chest").strip() != passed_text:
+                    mismatches.append("chest")
             if expected.get("marker") == "minecraft:tuff":
-                reply = client.command(queries["marker_tuff"])
-                case_notes.append(f"$ {queries['marker_tuff']}\n{reply}")
+                if run_query("marker_tuff").strip() != passed_text:
+                    mismatches.append("marker")
             if expected.get("marker") == "minecraft:prismarine":
-                reply = client.command(queries["marker_prismarine"])
-                case_notes.append(f"$ {queries['marker_prismarine']}\n{reply}")
+                if run_query("marker_prismarine").strip() != passed_text:
+                    mismatches.append("marker")
             for field in ("done", "awards", "rejects"):
                 if field in expected:
-                    reply = client.command(queries[field])
-                    case_notes.append(f"$ {queries[field]}\n{reply}")
+                    if storage_number(run_query(field)) != str(expected[field]):
+                        mismatches.append(field)
             if "witness_count" in expected:
-                for key in ("witness_store", "witness_get"):
-                    reply = client.command(queries[key])
-                    case_notes.append(f"$ {queries[key]}\n{reply}")
+                run_query("witness_store")
+                if storage_number(run_query("witness_get")) != str(expected["witness_count"]):
+                    mismatches.append("witness_count")
             if "forceload_chunks" in expected:
-                reply = client.command(queries["forceload"])
-                case_notes.append(f"$ {queries['forceload']}\n{reply}")
+                loaded = run_query("forceload")
+                count_text = patterns.get("forceload_count", "")
+                chunks = patterns.get("forceload_chunks", [])
+                if count_text not in loaded or any(chunk not in loaded for chunk in chunks):
+                    mismatches.append("forceload")
             if rejected:
                 status = "fail"
                 reason = "command_rejected"
             elif not payload.get("reply_patterns_locked"):
                 status = "fail"
                 reason = "reply_pattern_unverified"
-            else:
+            elif mismatches:
                 status = "fail"
-                reason = "reply_pattern_missing"
+                reason = "mismatch:" + ",".join(mismatches)
+            else:
+                status = "pass"
+                reason = "matched"
             results.append({"id": case["id"], "result": status, "reason": reason})
             transcript.extend(case_notes)
             transcript.append(f"result {case['id']}: {status} ({reason})")
@@ -412,21 +448,17 @@ def one_attempt(pin: dict, jar: Path, attempt: int, password: str) -> dict:
     try:
         server.start()
         server.wait_for_exit_or_properties()
-        exited = server.proc is not None and server.proc.poll() is not None
         server.stop()
-        eula_text = ""
         eula_path = run_dir / "eula.txt"
-        if eula_path.is_file():
-            eula_text = eula_path.read_text(encoding="utf-8", errors="replace")
+        eula_text = eula_path.read_text(encoding="utf-8", errors="replace") if eula_path.is_file() else ""
         if re.search(r"(?m)^eula=false\s*$", eula_text):
             accept_eula_after_false_exit(run_dir)
+        if not (run_dir / "server.properties").is_file():
             server.start()
             server.wait_for_exit_or_properties()
             server.stop()
-        elif exited and not (run_dir / "server.properties").is_file():
-            server.start()
-            server.wait_for_exit_or_properties()
-            server.stop()
+            if eula_path.is_file() and re.search(r"(?m)^eula=false\s*$", eula_path.read_text(encoding="utf-8", errors="replace")):
+                accept_eula_after_false_exit(run_dir)
         prepare_properties(run_dir, password)
         copy_datapacks(run_dir)
         server.start()
@@ -439,12 +471,14 @@ def one_attempt(pin: dict, jar: Path, attempt: int, password: str) -> dict:
         deadline = time.time() + 30
         while time.time() < deadline and server.proc is not None and server.proc.poll() is None:
             time.sleep(0.5)
-        log_parts = []
-        if server.console_path.is_file():
-            log_parts.append(server.console_path.read_text(encoding="utf-8", errors="replace"))
+        # Scan the test boot's own log. The first boot of an empty run/
+        # logs a missing server.properties stack before it creates the file.
+        # That text stays in console.log and is stored, and it is not the test log.
+        log_text = ""
         if server.log_path.is_file():
-            log_parts.append(server.log_path.read_text(encoding="utf-8", errors="replace"))
-        log_text = "\n".join(log_parts)
+            log_text = server.log_path.read_text(encoding="utf-8", errors="replace")
+        elif server.console_path.is_file():
+            log_text = server.console_path.read_text(encoding="utf-8", errors="replace")
         properties = (run_dir / "server.properties").read_text(encoding="utf-8", errors="replace")
         transcript = f"readiness list:\n{ready}\nstop:\n{client_stop}\n" + transcript
         redacted_transcript = redact(transcript, password)

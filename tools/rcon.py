@@ -3,9 +3,12 @@
 
 Packet framing is a little-endian int32 length, int32 request id, int32 type,
 a UTF-8 payload, and two trailing NUL bytes. Login is type 3. A command is
-type 2. Split command responses that share a request id are concatenated.
+type 2. Split responses that share a request id are concatenated.
 
-This module was not connected to a Minecraft server on the M0 EULA stop.
+A follow-up empty command was tried as an end marker. On the pinned 26.3
+server that second packet can make the client connection close while a long
+reply, such as `help item`, is still being read. Reassembly now waits for a
+short quiet period after the last packet of the command id.
 """
 
 from __future__ import annotations
@@ -107,21 +110,24 @@ class RconClient:
             raise RconError("RCON socket is not connected")
         request_id = self._next_id
         self._next_id += 1
-        terminator_id = self._next_id
-        self._next_id += 1
         self._send(request_id, TYPE_COMMAND, text)
-        # A second empty command marks the end of a fragmented response.
-        self._send(terminator_id, TYPE_COMMAND, "")
+        assert self._sock is not None
+        previous_timeout = self._sock.gettimeout()
+        self._sock.settimeout(self.timeout)
         parts: List[str] = []
-        while True:
-            response_id, packet_type, payload = _read_packet(self._sock)
-            if response_id == terminator_id:
-                break
-            if response_id == request_id and packet_type in (TYPE_RESPONSE, TYPE_COMMAND):
+        try:
+            while True:
+                try:
+                    response_id, _packet_type, payload = _read_packet(self._sock)
+                except (socket.timeout, TimeoutError):
+                    break
+                if response_id != request_id:
+                    raise RconError(f"unexpected RCON request id {response_id}")
                 parts.append(payload)
-                continue
-            if response_id == request_id:
-                parts.append(payload)
-                continue
-            raise RconError(f"unexpected RCON request id {response_id}")
+                # Fragments of one reply arrive together. A quiet gap ends it.
+                self._sock.settimeout(0.4)
+        finally:
+            self._sock.settimeout(previous_timeout)
+        if not parts:
+            raise RconError(f"no RCON response for {text!r}")
         return "".join(parts)
