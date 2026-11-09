@@ -10,7 +10,7 @@ F-0001 Ledger Cairn is non-canon plumbing used to prove the pipeline. It is not 
 
 | Label | Value |
 | --- | --- |
-| Automated | pass, static files only, if `tools/static_validate.py` exits 0. The dedicated-server suite was not run |
+| Automated | pass. Static validator exit 0, and two wiped-world runs of `tools/run_tests.sh` exit 0 on Java 25. See `evidence/m0/39028bf7cce08d280660554e759e9edc2687a565-author.json` |
 | Simulation | not run |
 | Human playtest | none |
 
