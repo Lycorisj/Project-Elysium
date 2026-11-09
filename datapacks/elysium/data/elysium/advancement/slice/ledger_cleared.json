@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:prismarine"
+    },
+    "title": {
+      "translate": "elysium.slice.ledger_cleared.title",
+      "fallback": "账本"
+    },
+    "description": {
+      "translate": "elysium.slice.ledger_cleared.description",
+      "fallback": "标记"
+    },
+    "frame": "task",
+    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "granted": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "granted"
+    ]
+  ]
+}

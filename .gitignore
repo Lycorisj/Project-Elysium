@@ -1,0 +1,11 @@
+run/
+dist/
+evidence/m0/attempts/
+server/jars/
+*.jar
+*.mca
+logs/
+*.log
+eula.txt
+__pycache__/
+node_modules/

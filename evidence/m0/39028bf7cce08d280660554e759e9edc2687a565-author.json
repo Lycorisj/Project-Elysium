@@ -1,0 +1,150 @@
+{
+  "run_id": "39028bf7cce08d280660554e759e9edc2687a565-author",
+  "role": "author",
+  "git_sha": "39028bf7cce08d280660554e759e9edc2687a565",
+  "git_dirty": false,
+  "spec": "F-0001",
+  "game_version": "26.3",
+  "server_jar_sha1": "33680f5f2ac32864d6d7cf5e56a705fdb3e05f4c",
+  "java_version": 25,
+  "started_at": "2026-11-09T08:12:40Z",
+  "ended_at": "2026-11-09T08:13:57Z",
+  "exit_code": 0,
+  "attempts": [
+    {
+      "attempt": 1,
+      "clock_case": "tick_step",
+      "cases": [
+        {
+          "id": "place_room",
+          "result": "pass",
+          "reason": "matched"
+        },
+        {
+          "id": "empty",
+          "result": "pass",
+          "reason": "matched"
+        },
+        {
+          "id": "wrong_item",
+          "result": "pass",
+          "reason": "matched"
+        },
+        {
+          "id": "success",
+          "result": "pass",
+          "reason": "matched"
+        },
+        {
+          "id": "idempotent",
+          "result": "pass",
+          "reason": "matched"
+        },
+        {
+          "id": "locked",
+          "result": "pass",
+          "reason": "matched"
+        },
+        {
+          "id": "witness_missing",
+          "result": "pass",
+          "reason": "matched"
+        },
+        {
+          "id": "clock_stable",
+          "result": "pass",
+          "reason": "matched"
+        }
+      ],
+      "log_failures": [],
+      "log_sha256": "e724bf800a91eeb14456b4fb47538f98d633526a82ef7a48053059623d6ac679",
+      "transcript_sha256": "50938830ace14d897ef630c91716b89241aeaf2d1f1dc33e9c18bdbd8c21e078"
+    },
+    {
+      "attempt": 2,
+      "clock_case": "tick_step",
+      "cases": [
+        {
+          "id": "place_room",
+          "result": "pass",
+          "reason": "matched"
+        },
+        {
+          "id": "empty",
+          "result": "pass",
+          "reason": "matched"
+        },
+        {
+          "id": "wrong_item",
+          "result": "pass",
+          "reason": "matched"
+        },
+        {
+          "id": "success",
+          "result": "pass",
+          "reason": "matched"
+        },
+        {
+          "id": "idempotent",
+          "result": "pass",
+          "reason": "matched"
+        },
+        {
+          "id": "locked",
+          "result": "pass",
+          "reason": "matched"
+        },
+        {
+          "id": "witness_missing",
+          "result": "pass",
+          "reason": "matched"
+        },
+        {
+          "id": "clock_stable",
+          "result": "pass",
+          "reason": "matched"
+        }
+      ],
+      "log_failures": [],
+      "log_sha256": "c41733283fc984f1ce630b651a7d4f23a71e4118d743ee4e5f416e2b655e945b",
+      "transcript_sha256": "1839b08b17134e810e213218d40fe401e51c8929dabaabc3792fd28cbe07939a"
+    }
+  ],
+  "clock_case": "tick_step",
+  "readiness_probe": "rcon list",
+  "management_protocol": "not_used",
+  "human_playtest": "none",
+  "simulation": "not_run",
+  "log_sha256": "c41733283fc984f1ce630b651a7d4f23a71e4118d743ee4e5f416e2b655e945b",
+  "transcript_sha256": "1839b08b17134e810e213218d40fe401e51c8929dabaabc3792fd28cbe07939a",
+  "release_zip_sha256": "e2cc0484d2888d76e658585d0b3b0fce819a85248a682f8203dee7050d3ac4c5",
+  "release_zip_note": "tools/pack_release.sh exit 0. Zip is dist/elysium-datapack.zip and is not committed. File list is the ship datapack only.",
+  "earlier_attempts": [
+    {
+      "name": "empty-rcon-terminator",
+      "result": "fail",
+      "reason": "An empty follow-up RCON command closed the client while help item was read. The server had launched. The client was changed to wait for a quiet gap."
+    },
+    {
+      "name": "tick-query-during-sprint",
+      "result": "fail",
+      "reason": "tick sprint returned before its ticks finished. Polling tick query during the sprint closed the RCON client."
+    },
+    {
+      "name": "tick-step-before-gametime-moved",
+      "result": "fail",
+      "server_launched": true,
+      "note": "Attempt 1 passed all eight cases. Attempt 2 failed clock_stable because rejects was still 0 when read. tick step had replied before gametime advanced. The final pair waits for gametime."
+    }
+  ],
+  "secrets_redacted": true,
+  "unverified": [
+    "discovery",
+    "visual quality",
+    "difficulty feel",
+    "narrative",
+    "client behavior",
+    "fun"
+  ],
+  "runtime_pass": true
+}

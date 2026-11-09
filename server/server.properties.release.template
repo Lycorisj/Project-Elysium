@@ -1,0 +1,15 @@
+# Release-server template. The test runner does not use this file.
+# No password is filled in. RCON stays off. The management server stays off.
+online-mode=true
+white-list=true
+enable-rcon=false
+broadcast-rcon-to-ops=false
+rcon.password=
+management-server-enabled=false
+gamemode=adventure
+difficulty=peaceful
+spawn-monsters=false
+enable-query=false
+prevent-proxy-connections=true
+server-ip=
+function-permission-level=2

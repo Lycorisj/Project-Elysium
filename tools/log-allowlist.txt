@@ -1,0 +1,4 @@
+# Exact server-log lines that the layer-2 scan may ignore.
+# Blank lines and lines whose first non-whitespace character is # are comments.
+# A pattern is one exact log line. This file ships with no patterns.
+# Adding a line is a reviewed change. Do not loosen the scanner to obtain a pass.
