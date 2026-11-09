@@ -331,6 +331,13 @@ def wait_for_list(password: str, proc: subprocess.Popen) -> str:
     raise SystemExit(f"readiness probe failed: RCON list was not accepted ({last_error})")
 
 
+def parse_ticks(reply: str) -> int | None:
+    match = re.search(r"(\d+)", reply)
+    if match is None:
+        return None
+    return int(match.group(1))
+
+
 def run_cases(password: str) -> tuple[list[dict], str, list[str]]:
     payload = json.loads((ROOT / "tools" / "cases" / "F-0001.json").read_text(encoding="utf-8"))
     transcript: list[str] = []
@@ -351,8 +358,11 @@ def run_cases(password: str) -> tuple[list[dict], str, list[str]]:
                 case_notes.append(f"$ {command}\n{reply}")
                 rejected = rejected or looks_rejected(reply)
             if case.get("advance_ticks"):
-                # 26.3: tick step advances a frozen game and returns when the ticks
-                # have run. tick sprint returns before its ticks finish.
+                # 26.3 replies to tick step before those ticks are visible to the
+                # next RCON command. Wait until gametime has moved by the request.
+                before = client.command("time query gametime")
+                case_notes.append(f"$ time query gametime\n{before}")
+                before_tick = parse_ticks(before)
                 command = "tick step 40t"
                 reply = client.command(command)
                 case_notes.append(f"$ {command}\n{reply}")
@@ -369,6 +379,17 @@ def run_cases(password: str) -> tuple[list[dict], str, list[str]]:
                         time.sleep(1.0)
                 else:
                     clock_case = "tick_step"
+                    deadline = time.time() + 5
+                    while time.time() < deadline:
+                        now_reply = client.command("time query gametime")
+                        case_notes.append(f"$ time query gametime\n{now_reply}")
+                        now_tick = parse_ticks(now_reply)
+                        if before_tick is not None and now_tick is not None and now_tick >= before_tick + 40:
+                            break
+                        time.sleep(0.1)
+                    else:
+                        rejected = True
+                        case_notes.append("gametime did not advance 40 ticks")
             queries = payload["queries"]
             patterns = payload.get("reply_patterns", {})
             expected = case.get("expect", {})
