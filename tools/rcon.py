@@ -121,6 +121,10 @@ class RconClient:
                     response_id, _packet_type, payload = _read_packet(self._sock)
                 except (socket.timeout, TimeoutError):
                     break
+                except RconError:
+                    if parts:
+                        break
+                    raise
                 if response_id != request_id:
                     raise RconError(f"unexpected RCON request id {response_id}")
                 parts.append(payload)

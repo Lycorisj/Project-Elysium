@@ -357,19 +357,19 @@ def run_cases(password: str) -> tuple[list[dict], str, list[str]]:
                     case_notes.append("tick sprint was rejected; waited 3 seconds; clock_case: wall_clock")
                 else:
                     clock_case = payload["clock"]["prefer_manifest_value"]
-                    # 26.3 returns "The game is sprinting" before the ticks finish.
-                    deadline = time.time() + 5
-                    finished = False
-                    while time.time() < deadline:
+                    # 26.3 replies "The game is sprinting" before the ticks finish.
+                    # Querying RCON during the sprint stalls the client, so wait
+                    # one second, then ask once.
+                    time.sleep(1.0)
+                    state = client.command("tick query")
+                    case_notes.append(f"$ tick query\n{state}")
+                    if "running normally" not in state.lower():
+                        time.sleep(2.0)
                         state = client.command("tick query")
                         case_notes.append(f"$ tick query\n{state}")
-                        if "running normally" in state.lower():
-                            finished = True
-                            break
-                        time.sleep(0.1)
-                    if not finished:
+                    if "running normally" not in state.lower():
                         rejected = True
-                        case_notes.append("tick sprint did not finish within 5 seconds")
+                        case_notes.append("tick sprint did not finish before the ledger was read")
             queries = payload["queries"]
             patterns = payload.get("reply_patterns", {})
             expected = case.get("expect", {})
@@ -498,6 +498,24 @@ def one_attempt(pin: dict, jar: Path, attempt: int, password: str) -> dict:
             "log_failures": log_failures,
             "log_sha256": sha256_text(redacted_log),
             "transcript_sha256": sha256_text(redacted_transcript),
+            "readiness_probe": "rcon list",
+        }
+    except Exception as exc:
+        message = f"{type(exc).__name__}: {exc}"
+        evidence = attempt_evidence_dir(attempt)
+        (evidence / "runner-error.txt").write_text(message + "\n", encoding="utf-8")
+        if server.log_path.is_file():
+            (evidence / "server.log").write_text(
+                redact(server.log_path.read_text(encoding="utf-8", errors="replace"), password),
+                encoding="utf-8",
+            )
+        return {
+            "attempt": attempt,
+            "cases": [{"id": "runner", "result": "fail", "reason": message}],
+            "clock_case": "not_run",
+            "log_failures": [message],
+            "log_sha256": None,
+            "transcript_sha256": None,
             "readiness_probe": "rcon list",
         }
     finally:
